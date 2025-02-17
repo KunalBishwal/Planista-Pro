@@ -75,7 +75,11 @@ export default function Footer() {
             </div>
           </div>
         </div>
+<<<<<<< HEAD
         <div className="mt-4 border-t border-white/50 pt-4 text-center text-s opacity-90">
+=======
+        <div className="mt-4 border-t border-white/50 pt-4 text-center text-xs opacity-90">
+>>>>>>> 304df051d49875534961dcd19efc6285de27a833
           <p>&copy; {new Date().getFullYear()} Planista-Pro. All rights reserved.</p>
         </div>
       </div>

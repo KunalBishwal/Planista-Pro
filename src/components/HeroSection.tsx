@@ -1,56 +1,68 @@
-"use client"
-import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
 
-export default function HeroSection() {
+export default function Navbar() {
   return (
-    <section className="relative h-[600px] overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop')]" />
+    // Warm gradient background for the navbar
+    <nav className="bg-gradient-to-r from-[#F9B4AB] to-[#F28179] shadow-md">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Brand name in white for contrast */}
+        <Link href="/" className="text-2xl font-bold text-white">
+          Planista-Pro
+        </Link>
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent backdrop-blur-sm" />
+        <div className="space-x-1 sm:space-x-2">
+          {/* Ghost buttons: white text, subtle hover background */}
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/10 rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/">Home</Link>
+          </Button>
 
-      {/* Content Container */}
-      <div className="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl text-white"
-        >
-          <h1 className="text-5xl font-bold mb-6">Create Unforgettable Events with Us</h1>
-          <p className="text-xl opacity-90 mb-8">
-            Discover beautiful venues, professional staff, and everything you need to make your event extraordinary.
-          </p>
-          <div className="flex gap-4">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-[#F9B4AB] to-[#F28179] text-white hover:opacity-90"
-              asChild
-            >
-              <Link href="/venues" className="flex items-center">
-                Browse Venues
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/10 rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/venues">Venues</Link>
+          </Button>
 
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-[#F9B4AB] to-[#F28179] text-white hover:opacity-90"
-              asChild
-            >
-              <Link href="/about">
-                About Us
-              </Link>
-            </Button>
-          </div>
-        </motion.div>
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/10 rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/event-booking">Events</Link>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/10 rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/staff">Staff</Link>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/10 rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/about">About</Link>
+          </Button>
+
+          {/* Default button: white background, coral text, transitions on hover */}
+          <Button
+            variant="default"
+            className="bg-white text-[#F28179] hover:bg-[#F9B4AB] hover:text-white rounded-full px-4 py-2"
+            asChild
+          >
+            <Link href="/checkout">Checkout</Link>
+          </Button>
+        </div>
       </div>
-    </section>
+    </nav>
   )
 }
-
