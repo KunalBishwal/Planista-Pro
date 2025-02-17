@@ -33,9 +33,9 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
+            // Removed viewport prop so the cards render immediately
             className="grid gap-8 md:grid-cols-3"
           >
             <AboutCard
@@ -68,8 +68,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl font-bold mb-6 text-white">

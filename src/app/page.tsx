@@ -58,49 +58,51 @@ export default function Page() {
             <p className="text-[#B8473F] mt-2">Check out our upcoming events</p>
           </motion.div>
           <div className="grid gap-6 md:grid-cols-3">
-            {featuredEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                {/* Updated shadow color to match pink/coral theme */}
-                <Card className="overflow-hidden rounded-xl shadow-xl shadow-[#F9B4AB] transition delay-100 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 bg-white">
-                  {event.coverImage && (
-                    <div className="relative aspect-video overflow-hidden">
-                      <img
-                        src={event.coverImage || "/placeholder.svg"}
-                        alt={event.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-[#F28179]">{event.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm text-[#B8473F]">
-                      <div className="flex items-center gap-2">
-                        {/* Updated icon color */}
-                        <Calendar className="h-4 w-4 text-[#F28179]" />
-                        {new Date(event.startDate).toLocaleDateString(undefined, {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+            {featuredEvents.map((event, index) => {
+              // Handle startDate formatting
+              const formattedDate = new Date(event.startDate).toLocaleDateString(undefined, {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+
+              return (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Card className="overflow-hidden rounded-xl shadow-xl shadow-[#F9B4AB] transition delay-100 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 bg-white">
+                    {event.coverImage && (
+                      <div className="relative aspect-video overflow-hidden">
+                        <img
+                          src={event.coverImage || "/placeholder.svg"}
+                          alt={event.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
-                      {/* Updated text color */}
-                      <CardDescription className="line-clamp-2 text-[#D0584E]">
-                        {event.description}
-                      </CardDescription>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    )}
+                    <CardHeader>
+                      <CardTitle className="text-[#F28179]">{event.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm text-[#B8473F]">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-[#F28179]" />
+                          {formattedDate}
+                        </div>
+                        <CardDescription className="line-clamp-2 text-[#D0584E]">
+                          {event.description}
+                        </CardDescription>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
       </section>

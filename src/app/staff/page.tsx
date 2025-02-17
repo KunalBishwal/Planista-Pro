@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const staffMembers = [
-  { id: 1, name: "Alice Johnson", role: "Event Coordinator", image: "https://i.pravatar.cc/150?img=1" },
-  { id: 2, name: "Bob Smith", role: "Venue Manager", image: "https://i.pravatar.cc/150?img=2" },
-  { id: 3, name: "Carol Williams", role: "Catering Specialist", image: "https://i.pravatar.cc/150?img=3" },
-  { id: 4, name: "David Brown", role: "Technical Support", image: "https://i.pravatar.cc/150?img=4" },
-  { id: 5, name: "Eva Martinez", role: "Decor Specialist", image: "https://i.pravatar.cc/150?img=5" },
-  { id: 6, name: "Frank Lee", role: "Security Manager", image: "https://i.pravatar.cc/150?img=6" },
+  { id: 1, name: "Alice Johnson", role: "Event Coordinator", image: "https://i.pravatar.cc/150?img=1", gender: "female" },
+  { id: 2, name: "Bob Smith", role: "Venue Manager", image: "https://i.pravatar.cc/150?img=11", gender: "male" },
+  { id: 3, name: "Carol Williams", role: "Catering Specialist", image: "https://i.pravatar.cc/150?img=23", gender: "female" },
+  { id: 4, name: "David Brown", role: "Technical Support", image: "https://i.pravatar.cc/150?img=14", gender: "male" },
+  { id: 5, name: "Eva Martinez", role: "Decor Specialist", image: "https://i.pravatar.cc/150?img=5", gender: "female" },
+  { id: 6, name: "Frank Lee", role: "Security Manager", image: "https://i.pravatar.cc/150?img=18", gender: "male" },
 ]
 
 export default function StaffPage() {
@@ -35,7 +35,15 @@ export default function StaffPage() {
               <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
                   <Avatar className="w-24 h-24 mx-auto">
-                    <AvatarImage src={member.image} alt={member.name} />
+                    <AvatarImage
+                      src={
+                        member.image ||
+                        (member.gender === "female"
+                          ? "/default-female.svg"
+                          : "/default-male.svg")
+                      }
+                      alt={member.name}
+                    />
                     <AvatarFallback>
                       {member.name
                         .split(" ")

@@ -3,16 +3,18 @@ import { Facebook, Twitter, Instagram } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white">
-      <div className="container mx-auto px-4 py-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-gradient-to-r from-[#F28179] to-[#F9B4AB] text-white">
+      <div className="container mx-auto px-4 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <h3 className="text-lg font-semibold mb-4">Planista-Pro</h3>
-            <p className="text-sm opacity-80">Your ultimate event management solution</p>
+            <h3 className="text-lg font-semibold mb-2">Planista-Pro</h3>
+            <p className="text-sm opacity-90">
+              Your ultimate event management solution
+            </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
+            <ul className="space-y-1">
               <li>
                 <Link href="/" className="text-sm hover:underline">
                   Home
@@ -41,7 +43,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+            <h3 className="text-lg font-semibold mb-2">Connect With Us</h3>
             <div className="flex space-x-4">
               <a
                 href="https://facebook.com"
@@ -52,20 +54,31 @@ export default function Footer() {
               >
                 <Facebook size={24} aria-hidden="true" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/80" aria-label="Visit our X page">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white/80"
+                aria-label="Visit our Twitter page"
+              >
                 <Twitter size={24} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/80" aria-label="Visit our Instagram page">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white/80"
+                aria-label="Visit our Instagram page"
+              >
                 <Instagram size={24} />
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-white/20 text-center text-sm opacity-80">
+        <div className="mt-4 border-t border-white/50 pt-4 text-center text-s opacity-90">
           <p>&copy; {new Date().getFullYear()} Planista-Pro. All rights reserved.</p>
         </div>
       </div>
     </footer>
   )
 }
-

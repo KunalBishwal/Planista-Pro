@@ -40,12 +40,21 @@ export default function VenueCard({ venue }: VenueCardProps) {
             {venue.location} • {venue.capacity} guests
           </p>
           <p className="text-[#bd5851] font-semibold mt-2">${venue.price}/day</p>
-          <Button
-            asChild
-            className="mt-4 bg-[#F28179] text-white shadow-md hover:bg-[#f8a9a3] hover:shadow-lg transition-all duration-300 rounded-full"
-          >
-            <Link href={`/venues/${venue.id}`}>View Details</Link>
-          </Button>
+          <div className="mt-4 flex space-x-4">
+            <Button
+              asChild
+              className="bg-[#F28179] text-white shadow-md hover:bg-[#f8a9a3] hover:shadow-lg transition-all duration-300 rounded-full"
+            >
+              <Link href={`/venues/${venue.id}`}>View Details</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="bg-white text-[#F28179] hover:bg-[#F9B4AB] px-4 py-2 hover:text-white transition-all duration-300"
+            >
+              <Link href="/checkout">Book Now</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </motion.div>
