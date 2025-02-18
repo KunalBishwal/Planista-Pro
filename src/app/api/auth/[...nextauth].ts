@@ -1,38 +1,70 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getUserByEmail } from "@/utils/database";  // Import the function we created
-import { Session, User } from "next-auth"; // Import necessary types
+import { getUserByEmail } from "@/utils/database";
+import type { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
+import type { User as NextAuthUser } from "next-auth";
+import bcrypt from "bcrypt";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email", required: true },
+        password: { label: "Password", type: "password", required: true },
       },
       async authorize(credentials) {
-        if (!credentials?.email) {
-          return null; // If email is not provided, return null
-        }
-        const user = await getUserByEmail(credentials.email); // Now credentials.email is guaranteed to be a string
-        if (user && user.password === credentials.password) {
-          // Assuming user object has a 'role' field that tells if the user is admin
-          return { ...user, isAdmin: user.role === "admin" }; // Add 'isAdmin' flag
-        }
-        return null;
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const user = await getUserByEmail(credentials.email);
+        if (!user) return null;
+
+        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!passwordMatch) return null;
+
+        return {
+          id: user.id,
+          name: user.name || undefined, 
+          email: user.email,
+          image: (user as any).image || undefined,
+          role: user.role,
+          isAdmin: user.role === "admin",
+        };
       },
     }),
   ],
   callbacks: {
-    async session({ session, user }: { session: Session; user: User }) {
-      session.user.id = user.id;
-      session.user.isAdmin = user.isAdmin; 
+    async jwt({ token, user }: { token: JWT; user?: Partial<NextAuthUser> }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image;
+        token.role = user.role;
+        token.isAdmin = user.role === "admin";
+        console.log("JWT callback - token:", token);
+      }
+      return token;
+    },
+    async session({ session, token }: { session: any; token: JWT }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.image;
+        session.user.role = token.role;
+        session.user.isAdmin = token.isAdmin;
+        console.log("Session Callback - session:", session);
+      }
       return session;
     },
   },
   pages: {
-    signIn: "/auth/signin", // Custom sign-in page (optional)
+    signIn: "/auth/signin",
+  },
+  session: {
+    strategy: "jwt",
   },
 };
 
@@ -40,15 +72,22 @@ export default NextAuth(authOptions);
 
 declare module "next-auth" {
   interface User {
+    id: string;
+    name?: string;
+    email?: string;
+    image?: string;
+    role: string;
     isAdmin?: boolean;
   }
+
   interface Session {
     user: {
       id: string;
-      isAdmin?: boolean;
-      email?: string;
       name?: string;
+      email?: string;
       image?: string;
-    }
+      role: string;
+      isAdmin?: boolean;
+    };
   }
 }

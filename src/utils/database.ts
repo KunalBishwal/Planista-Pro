@@ -1,5 +1,5 @@
-// utils/database.ts (or directly inside nextauth.ts)
-import { prisma } from "@/lib/prisma";
+// utils/database.ts
+import prisma from "@/lib/prisma";
 
 export const getUserByEmail = async (email: string) => {
   try {

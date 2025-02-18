@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen bg-[#FFE6E2]">
-        {/* Wrap the client-side part with ClientSessionWrapper */}
+     
         <ClientSessionWrapper>
           <Navbar />
           <main className="flex-grow">{children}</main>

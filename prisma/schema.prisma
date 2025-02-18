@@ -12,5 +12,20 @@ model User {
   name      String?
   email     String   @unique
   password  String
+  role      String   @default("user") // "user" or "admin"
   createdAt DateTime @default(now())
+}
+
+model Venue {
+  venue_id      String   @id @default(uuid())
+  venue_name    String
+  address_line1 String
+  address_line2 String?
+  city          String
+  state         String
+  zip_code      String
+  capacity      Int
+  availability  Boolean  @default(true)
+  price_per_day Decimal  @db.Decimal(10,2)
+  image         String?
 }
