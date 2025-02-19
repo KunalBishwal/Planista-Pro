@@ -12,8 +12,8 @@ export default function VenuesPage() {
   const [venues, setVenues] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  // Form state for new venue insertion
   const [newVenue, setNewVenue] = useState({
     venue_name: "",
     address_line1: "",
@@ -26,12 +26,23 @@ export default function VenuesPage() {
     image: "",
   })
 
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const res = await fetch('/api/auth/session')
+        const session = await res.json()
+        setIsAdmin(session?.user?.role === 'admin')
+      } catch (error) {
+        console.error('Error checking admin status:', error)
+      }
+    }
+    checkAdminStatus()
+  }, [])
+
   const fetchVenues = async () => {
     try {
       const res = await fetch("/api/venues")
-      if (!res.ok) {
-        throw new Error(`Error! status: ${res.status}`)
-      }
+      if (!res.ok) throw new Error(`Error! status: ${res.status}`)
       const data = await res.json()
       setVenues(data)
       setLoading(false)
@@ -41,15 +52,10 @@ export default function VenuesPage() {
     }
   }
 
-  useEffect(() => {
-    fetchVenues()
-  }, [])
+  useEffect(() => { fetchVenues() }, [])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewVenue({
-      ...newVenue,
-      [e.target.name]: e.target.value,
-    })
+    setNewVenue({ ...newVenue, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -58,28 +64,17 @@ export default function VenuesPage() {
       const res = await fetch("/api/venues", {
         method: "POST",
         body: JSON.stringify(newVenue),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       })
       
       const responseData = await res.json()
-      
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to add venue")
-      }
+      if (!res.ok) throw new Error(responseData.error || "Failed to add venue")
 
       alert("Venue added successfully")
       setNewVenue({
-        venue_name: "",
-        address_line1: "",
-        address_line2: "",
-        city: "",
-        state: "",
-        zip_code: "",
-        capacity: "",
-        price_per_day: "",
-        image: "",
+        venue_name: "", address_line1: "", address_line2: "",
+        city: "", state: "", zip_code: "", capacity: "",
+        price_per_day: "", image: "",
       })
       fetchVenues()
       setShowForm(false)
@@ -99,6 +94,18 @@ export default function VenuesPage() {
         >
           Explore Our Venues
         </motion.h1>
+
+        {isAdmin && (
+          <div className="mt-12 text-center">
+            <Button
+              onClick={() => setShowForm(!showForm)}
+              className="bg-[#F28179] text-white hover:bg-[#D0584E] transition-colors duration-300 my-5"
+            >
+              {showForm ? "Hide Form" : "Add New Venue"}
+            </Button>
+          </div>
+        )}
+
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#F28179]"></div>
@@ -118,18 +125,7 @@ export default function VenuesPage() {
           </div>
         )}
 
-        {/* Add New Venue Button */}
-        <div className="mt-12 text-center">
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-[#F28179] text-white hover:bg-[#D0584E] transition-colors duration-300"
-          >
-            {showForm ? "Hide Form" : "Add New Venue"}
-          </Button>
-        </div>
-
-        {/* Add New Venue Form */}
-        {showForm && (
+        {isAdmin && showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,7 +139,7 @@ export default function VenuesPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                  <div>
                       <Label htmlFor="venue_name" className="text-[#B8473F]">
                         Venue Name *
                       </Label>
@@ -259,10 +255,11 @@ export default function VenuesPage() {
                         className="mt-1 text-[#B8473F]"
                       />
                     </div>
+                  
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-[#F9B4AB] to-[#F28179] text-white hover:from-[#F28179] hover:to-[#F9B4AB] transition-all duration-300"
+                    className="w-full bg-gradient-to-r from-[#F9B4AB] to-[#F28179] text-white hover:from-[#F28179] hover:to-[#F9B4AB] transition-all duration-300 "
                   >
                     Add Venue
                   </Button>

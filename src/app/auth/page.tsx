@@ -7,13 +7,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-// Import React Hook Form and Yup
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-// Define validation schema using Yup
 const schema = yup
   .object({
     name: yup.string().when("isLogin", {
@@ -39,19 +36,9 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
 
-  // Use React Hook Form with validation schema
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
+    defaultValues: { name: "", email: "", password: "" },
   });
 
   const handleAuth = async (data: any) => {
@@ -70,27 +57,40 @@ export default function AuthPage() {
       }
     } else {
       // Handle Sign-Up
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      });
+      try {
+        // Create user
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+        });
 
-      const result = await res.json();
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Registration failed");
+        }
 
-      if (res.ok) {
-        alert("✅ Account created! You can log in now.");
-        setIsLogin(true);
-        reset();
-      } else {
-        alert("❌ Error creating account: " + result.error);
+        // Auto-login after successful registration
+        const loginRes = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+
+        if (loginRes?.error) {
+          alert("Account created but login failed: " + loginRes.error);
+        } else {
+          router.push("/");
+        }
+        
+      } catch (error) {
+        alert("❌ Error: " + (error instanceof Error ? error.message : "Unknown error"));
       }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FFE6E2] relative overflow-hidden">
-      {/* Background animations */}
       <motion.div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#F9B4AB] rounded-full filter blur-xl opacity-70"></div>
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-[#F28179] rounded-full filter blur-xl opacity-70"></div>

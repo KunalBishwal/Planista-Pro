@@ -37,11 +37,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: Partial<NextAuthUser> }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id as string;
         token.name = user.name;
         token.email = user.email;
         token.image = user.image;
-        token.role = user.role;
+        token.role = user.role as string;
         token.isAdmin = user.role === "admin";
         console.log("JWT callback - token:", token);
       }

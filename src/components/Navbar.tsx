@@ -4,25 +4,26 @@ import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    console.log("Navbar session:", session);
-  }, [session]);
 
   const handleProfileClick = () => setDropdownOpen((prev) => !prev);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setDropdownOpen(false);
-    signOut();
+    await signOut({
+      redirect: false,
+      callbackUrl: '/about'
+    });
+    router.push('/about');
   };
 
   const closeDropdown = () => setDropdownOpen(false);
 
-  // Choose default profile image based on admin status
   const defaultImage = session?.user?.isAdmin ? "/default-admin.png" : "/Default-Profile.jpg";
 
   return (
@@ -51,6 +52,7 @@ export default function Navbar() {
           >
             <Link href="/event-booking">Events</Link>
           </Button>
+         
           {session?.user ? (
             <>
               {session.user.isAdmin && (

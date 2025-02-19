@@ -5,6 +5,7 @@ import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcrypt";
 
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
