@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Planista Pro - Event Planning Management System
 
-## Getting Started
+Planista Pro is a full-featured event planning management system that simplifies venue booking, staff management, and payment processing. Built with modern web technologies, it offers a seamless experience for event organizers and attendees.
 
-First, run the development server:
+## 🚀 Features
+- ✅ **Venue Management** – Browse, filter, and book venues in real-time
+- ✅ **Event Booking** – Manage and schedule events with ease
+- ✅ **Staff Management** – Assign staff to events and track availability
+- ✅ **Secure Payments** – Integrated with Stripe/PayPal for smooth transactions
+- ✅ **User Authentication** – Secure login with NextAuth.js and MySQL
+- ✅ **Real-Time Updates** – Venue availability and search results refresh dynamically
+- ✅ **Responsive UI** – Optimized for desktop and mobile devices
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🛠️ Tech Stack
+**Frontend**  
+- React.js + Next.js – For building a fast and dynamic UI
+- Tailwind CSS – For modern and responsive styling
+- Framer Motion – For smooth UI animations
+
+**Backend**  
+- Node.js + Express.js – Handles API routes and business logic
+- MySQL – Relational database for storing events, venues, users, and payments
+- Prisma ORM – Simplifies database interactions
+
+**Authentication**  
+- NextAuth.js – Email/password authentication with MySQL
+
+**Payments**  
+- Stripe / PayPal – Secure and seamless payment processing
+
+## 📂 Project Structure
 ```
+planista-pro/
+│── public/                  # Static assets (images, icons, etc.)
+│── src/
+│   ├── components/          # Reusable UI components
+│   ├── pages/               # Next.js pages (Home, Venues, Booking, etc.)
+│   ├── styles/              # Global and component-specific styles
+│   ├── utils/               # Helper functions
+│── prisma/                  # Database schema and migrations
+│── server/                  # Express.js backend
+│── .env                     # Environment variables
+│── next.config.js           # Next.js configuration
+│── package.json             # Dependencies and scripts
+│── README.md                # Project documentation
+```
+## 📌 Installation & Setup
+1. **Clone the Repository**
+```bash
+git clone https://github.com/your-username/planista-pro.git
+cd planista-pro
+npm install
+Set Up Environment Variables
+Create .env file:
+DATABASE_URL=mysql://user:password@localhost:3306/eventplanning
+NEXTAUTH_SECRET=your-secret-key
+STRIPE_SECRET_KEY=your-stripe-key
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set Up Database
+npx prisma migrate dev
+npx prisma generate
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Start Development Server:
+npm run dev
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This markdown file uses proper GitHub formatting with:
+- Headers and subheaders
+- Code blocks with syntax highlighting
+- Tables
+- Emoji support
+- Clear section organization
+- Bullet points and checkmark emojis
+- Proper indentation and spacing
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Just copy this into your README.md file and it will render correctly on GitHub.
