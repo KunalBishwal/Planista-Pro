@@ -1,7 +1,17 @@
-import Link from "next/link"
-import { Facebook, Twitter, Instagram } from "lucide-react"
+
+"use client";
+
+import Link from "next/link";
+import { Facebook, Twitter, Instagram } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function Footer() {
+  // Get session data from NextAuth
+  const { data: session } = useSession();
+
+  // Determine if the current user is an admin
+  const isAdmin = session?.user?.role === "admin";
+
   return (
     <footer className="bg-gradient-to-r from-[#F28179] to-[#F9B4AB] text-white">
       <div className="container mx-auto px-4 py-4">
@@ -31,11 +41,13 @@ export default function Footer() {
                   Events
                 </Link>
               </li>
-              <li>
-                <Link href="/staff" className="text-sm hover:underline">
-                  Staff
-                </Link>
-              </li>
+              {isAdmin && (
+                <li>
+                  <Link href="/staff" className="text-sm hover:underline">
+                    Staff
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href="/about" className="text-sm hover:underline">
                   About
@@ -43,6 +55,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+
           <div>
             <h3 className="text-lg font-semibold mb-2">Connect With Us</h3>
             <div className="flex space-x-4">
@@ -76,10 +89,10 @@ export default function Footer() {
             </div>
           </div>
         </div>
-<div className="mt-4 border-t border-white/50 pt-4 text-center text-xs opacity-90">
-  <p>&copy; {new Date().getFullYear()} Planista-Pro. All rights reserved.</p>
-</div>
+        <div className="mt-4 border-t border-white/50 pt-4 text-center text-xs opacity-90">
+          <p>&copy; {new Date().getFullYear()} Planista-Pro. All rights reserved.</p>
+        </div>
       </div>
     </footer>
-  )
+  );
 }

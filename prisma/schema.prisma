@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  password  String
-  role      String   @default("user") // "user" or "admin"
-  createdAt DateTime @default(now())
+  id            String         @id @default(uuid())
+  name          String?
+  email         String         @unique
+  password      String
+  role          String         @default("user") // "user" or "admin"
+  createdAt     DateTime       @default(now())
+  eventBookings EventBooking[] // Added reverse relation field
 }
 
 model Venue {
-  venue_id      String   @id @default(uuid())
+  venue_id      String         @id @default(uuid())
   venue_name    String
   address_line1 String
   address_line2 String?
@@ -25,7 +26,24 @@ model Venue {
   state         String
   zip_code      String
   capacity      Int
-  availability  Boolean  @default(true)
-  price_per_day Decimal  @db.Decimal(10,2)
+  availability  Boolean        @default(true)
+  price_per_day Decimal        @db.Decimal(10,2)
   image         String?
+  eventBookings EventBooking[] // Added reverse relation field
 }
+
+model EventBooking {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  status       String   @default("pending")
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  venueId      String
+  venue        Venue    @relation(fields: [venueId], references: [venue_id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
