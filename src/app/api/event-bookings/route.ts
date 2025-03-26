@@ -9,12 +9,14 @@ export async function GET(request: Request) {
     const upcomingEvents = await prisma.eventBooking.findMany({
       where: {
         startDate: { gt: new Date() },
-        status: "confirmed",
+        status: {
+          in: ["confirmed", "pending"] // Include both statuses
+        }
       },
       orderBy: { startDate: "asc" },
       include: {
-        venue: true,  // Include related venue data
-      },
+        venue: true
+      }
     });
     return new Response(JSON.stringify(upcomingEvents), {
       status: 200,

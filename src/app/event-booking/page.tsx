@@ -246,7 +246,8 @@ export default function EventBookingPage() {
                       </SelectContent>
                     </Select>
                     <div className="mt-2">
-                      <Link href="/venues" className="text-sm text-[#C0403E] hover:underline">
+                      <Link href="/venues" 
+                      className="text-sm text-[#C0403E] hover:underline">
                         View all venues
                       </Link>
                     </div>

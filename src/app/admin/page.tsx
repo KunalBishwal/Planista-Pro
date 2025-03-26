@@ -1,3 +1,4 @@
+//src\app\admin\page.tsx
 "use client"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -7,13 +8,21 @@ import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { ChevronRight, Calendar, MapPin, Users, BarChart2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 
-const recentBookings = [
-  { id: 1, event: "Summer Gala", date: "2023-07-15", status: "Confirmed" },
-  { id: 2, event: "Tech Conference", date: "2023-08-22", status: "Pending" },
-  { id: 3, event: "Wedding Reception", date: "2023-09-05", status: "Confirmed" },
-  { id: 4, event: "Corporate Retreat", date: "2023-10-10", status: "Cancelled" },
-]
+interface BookedEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startDate: string;
+  status: "Confirmed" | "Pending" | "Cancelled";
+  venue?: {
+    venue_name: string;
+    city: string;
+    state: string;
+    image?: string;
+  };
+}
 
 const statusColors = {
   Confirmed: "text-green-600",
@@ -24,6 +33,17 @@ const statusColors = {
 export default function AdminPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+
+  
+  const { data: events, isLoading, error } = useQuery<BookedEvent[]>({
+    queryKey: ["event-bookings"],
+    queryFn: async () => {
+      const res = await fetch("/api/event-bookings");
+      if (!res.ok) throw new Error("Failed to fetch events");
+      return res.json();
+    },
+    refetchInterval: 30000,
+  });
 
   if (status === "loading") return <LoadingSpinner />
 
@@ -57,19 +77,31 @@ export default function AdminPage() {
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-pink-50">
-                      <TableHead className="text-[#8A2D2B]">Event</TableHead>
-                      <TableHead className="text-[#8A2D2B]">Date</TableHead>
-                      <TableHead className="text-[#8A2D2B]">Status</TableHead>
+                    <TableRow className="bg-gray-100">
+                      <TableHead className="text-gray-900 font-semibold">Event</TableHead>
+                      <TableHead className="text-gray-900 font-semibold">Date</TableHead>
+                      <TableHead className="text-gray-900 font-semibold">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {recentBookings.map((booking) => (
-                      <TableRow key={booking.id} className="hover:bg-pink-50 transition-colors">
-                        <TableCell className="text-[#8A2D2B] font-medium">{booking.event}</TableCell>
-                        <TableCell className="text-[#8A2D2B]">{booking.date}</TableCell>
-                        <TableCell className={`font-medium ${statusColors[booking.status as keyof typeof statusColors]}`}>
-                          {booking.status}
+                    {events?.map((booking) => (
+                      <TableRow key={booking.id} className="hover:bg-gray-50 transition-colors">
+                        <TableCell className="text-gray-800 font-medium">{booking.title}</TableCell>
+                        <TableCell className="text-gray-800">{new Date(booking.startDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                              booking.status === "Confirmed"
+                                ? "bg-green-100 text-green-800"
+                                : booking.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : booking.status === "Cancelled"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {booking.status}
+                          </span>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -91,10 +123,10 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent className="p-6 my-2">
                 <div className="space-y-8">
-                <QuickActionButton className="mb-6" href="/event-booking" icon={<Calendar />} text="Create New Event" />
-                <QuickActionButton className="mb-6" href="/venues" icon={<MapPin />} text="Manage Venues" />
-                <QuickActionButton className="mb-6" href="/staff" icon={<Users />} text="Manage Staff" />
-                <QuickActionButton className="mb-6" href="#" icon={<BarChart2 />} text="View Reports" />
+                  <QuickActionButton className="mb-6" href="/event-booking" icon={<Calendar />} text="Create New Event" />
+                  <QuickActionButton className="mb-6" href="/venues" icon={<MapPin />} text="Manage Venues" />
+                  <QuickActionButton className="mb-6" href="/staff" icon={<Users />} text="Manage Staff" />
+                  <QuickActionButton className="mb-6" href="#" icon={<BarChart2 />} text="View Reports" />
                 </div>
               </CardContent>
             </Card>
@@ -114,7 +146,7 @@ interface QuickActionButtonProps {
 function QuickActionButton({ className, href, icon, text }: QuickActionButtonProps) {
   return (
     <Link href={href}>
-      <Button className={`w-full bg-gradient-to-r from-[#F9B4AB] to-[#F28179] hover:from-[#F28179] hover:to-[#F9B4AB] transition-all shadow-md text-white text-left flex items-center justify-between group ${className ? className : ""}`}>
+      <Button className={`w-full bg-gradient-to-r from-[#F9B4AB] to-[#F28179] hover:from-[#F28179] hover:to-[#F9B4AB] transition-all shadow-md text-white text-left flex items-center justify-between group ${className || ""}`}>
         <span className="flex items-center">
           {icon}
           <span className="ml-2">{text}</span>
@@ -124,7 +156,6 @@ function QuickActionButton({ className, href, icon, text }: QuickActionButtonPro
     </Link>
   )
 }
-
 
 function LoadingSpinner() {
   return (
