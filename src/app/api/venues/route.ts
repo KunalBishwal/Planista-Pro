@@ -1,8 +1,9 @@
-// src\app\api\venues\route.ts
-import prisma from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { Prisma } from '@prisma/client'
+// src/app/api/venues/route.ts
+import { NextResponse } from "next/server"
+import prisma from "@/lib/prisma"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { Prisma } from "@prisma/client"
 
 export async function GET() {
   try {
@@ -18,62 +19,57 @@ export async function GET() {
         zip_code: true,
         capacity: true,
         price_per_day: true,
-        image: true
-      }
+        image: true,
+      },
     })
 
-    return new Response(JSON.stringify(venues), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    })
+    // No Cache-Control header, so this always fetches fresh data
+    return NextResponse.json(venues, { status: 200 })
   } catch (error) {
-    console.error('Error fetching venues:', error)
-    return new Response(
-      JSON.stringify({
-        error: 'Error fetching venues',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
+    console.error("Error fetching venues:", error)
+    return NextResponse.json(
       {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+        error: "Error fetching venues",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
     )
   }
 }
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.role || session.user.role !== 'admin') {
-    return new Response(
-      JSON.stringify({ error: 'Unauthorized', details: 'Admin privileges required' }),
-      { status: 403, headers: { 'Content-Type': 'application/json' } }
+  if (!session?.user?.role || session.user.role !== "admin") {
+    return NextResponse.json(
+      { error: "Unauthorized", details: "Admin privileges required" },
+      { status: 403 }
     )
   }
 
   try {
     const data = await req.json()
-    
+
     const requiredFields = [
-      'venue_name', 'address_line1', 'city', 'state', 'zip_code',
-      'capacity', 'price_per_day'
+      "venue_name",
+      "address_line1",
+      "city",
+      "state",
+      "zip_code",
+      "capacity",
+      "price_per_day",
     ]
-    
-    const missingFields = requiredFields.filter(field => !data[field])
-    if (missingFields.length > 0) {
-      return new Response(
-        JSON.stringify({ error: 'Missing required fields', missingFields }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+    const missingFields = requiredFields.filter((f) => !data[f])
+    if (missingFields.length) {
+      return NextResponse.json(
+        { error: "Missing required fields", missingFields },
+        { status: 400 }
       )
     }
 
     if (isNaN(Number(data.capacity)) || isNaN(Number(data.price_per_day))) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid number format' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      return NextResponse.json(
+        { error: "Invalid number format" },
+        { status: 400 }
       )
     }
 
@@ -86,24 +82,23 @@ export async function POST(req: Request) {
         state: data.state.trim(),
         zip_code: data.zip_code.trim(),
         capacity: Number(data.capacity),
-        price_per_day: new Prisma.Decimal(Number(data.price_per_day).toFixed(2)),
+        price_per_day: new Prisma.Decimal(
+          Number(data.price_per_day).toFixed(2)
+        ),
         image: data.image?.trim(),
-        availability: true
-      }
+        availability: true,
+      },
     })
 
-    return new Response(JSON.stringify(venue), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return NextResponse.json(venue, { status: 201 })
   } catch (error) {
-    console.error('Error creating venue:', error)
-    return new Response(
-      JSON.stringify({
-        error: 'Error creating venue',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    console.error("Error creating venue:", error)
+    return NextResponse.json(
+      {
+        error: "Error creating venue",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
     )
   }
 }

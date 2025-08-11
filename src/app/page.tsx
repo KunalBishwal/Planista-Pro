@@ -1,4 +1,5 @@
 "use client";
+
 import HeroSection from "@/components/HeroSection";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -33,10 +34,10 @@ export default function Page() {
       if (!res.ok) throw new Error("Failed to fetch events");
       return res.json();
     },
-    refetchInterval: 30000,
+    refetchInterval: 30_000,
   });
 
-  // Add empty state
+  // Empty‐state: no bookings at all
   if (!isLoading && !error && events?.length === 0) {
     return (
       <div className="bg-[#FFE6E2]">
@@ -44,7 +45,7 @@ export default function Page() {
         <section className="py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold text-[#F28179] mb-4">
-              No Upcoming Events
+              No Booked Events
             </h2>
             <Link href="/event-booking">
               <Button className="bg-[#F28179] hover:bg-[#D0584E]">
@@ -69,11 +70,12 @@ export default function Page() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-[#F28179]">Upcoming Events</h2>
-            <p className="text-[#B8473F] mt-2">
-              Check out our upcoming events
-            </p>
+            <h2 className="text-3xl font-bold text-[#F28179]">
+              All Event Bookings
+            </h2>
+            <p className="text-[#B8473F] mt-2">Here are all your bookings</p>
           </motion.div>
+
           {isLoading ? (
             <p className="text-center text-[#B8473F]">Loading events...</p>
           ) : error ? (
@@ -82,15 +84,15 @@ export default function Page() {
             </p>
           ) : (
             <div className="grid gap-6 md:grid-cols-3">
-              {events?.map((event: BookedEvent, index: number) => {
-                const startDate = new Date(event.startDate);
-                const formattedDate = startDate.toLocaleDateString("en-US", {
+              {events!.map((event, i) => {
+                const d = new Date(event.startDate);
+                const formattedDate = d.toLocaleDateString("en-US", {
                   weekday: "long",
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 });
-                const formattedTime = startDate.toLocaleTimeString("en-US", {
+                const formattedTime = d.toLocaleTimeString("en-US", {
                   hour: "numeric",
                   minute: "2-digit",
                 });
@@ -101,10 +103,10 @@ export default function Page() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <Link href={`/event-booking/${event.id}`}>
-                      <Card className="h-full overflow-hidden rounded-xl shadow-xl transition delay-100 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 bg-white">
+                      <Card className="h-full overflow-hidden rounded-xl shadow-xl transition-transform hover:-translate-y-1 hover:scale-105 bg-white">
                         {event.venue?.image ? (
                           <div className="relative aspect-video overflow-hidden">
                             <img
@@ -133,7 +135,8 @@ export default function Page() {
                             </div>
                             {event.venue && (
                               <p className="truncate text-[#D0584E]">
-                                {event.venue.venue_name} - {event.venue.city}, {event.venue.state}
+                                {event.venue.venue_name} — {event.venue.city},{" "}
+                                {event.venue.state}
                               </p>
                             )}
                             <p className="line-clamp-2 text-[#D0584E]">

@@ -4,36 +4,22 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const upcomingEvents = await prisma.eventBooking.findMany({
-      where: {
-        startDate: { gt: new Date() },
-        status: {
-          in: ["confirmed", "pending"] // Include both statuses
-        }
-      },
+    // Return all bookings, ordered by startDate ascending
+    const allEvents = await prisma.eventBooking.findMany({
       orderBy: { startDate: "asc" },
-      include: {
-        venue: true
-      }
+      include: { venue: true },
     });
-    return new Response(JSON.stringify(upcomingEvents), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(allEvents, { status: 200 });
   } catch (error) {
     console.error("Error fetching event bookings:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to fetch event bookings" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    return NextResponse.json(
+      { error: "Failed to fetch event bookings" },
+      { status: 500 }
     );
   }
 }
-
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
